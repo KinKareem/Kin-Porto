@@ -1,0 +1,1920 @@
+/* ============================================================
+   STYLE.CSS : gaya seluruh halaman portofolio
+   ============================================================
+   DAFTAR ISI (cari dengan Ctrl+F nama section-nya)
+     VARIABEL      font, ukuran dasar  <-- mulai ubah dari sini
+     PALET         warna mode Engineer (gelap) & Designer (terang)
+     SWITCH MODE   tombol geser Engineer <-> Designer
+     LOADER        layar pembuka
+     KURSOR        kursor kustom
+     NAVIGASI      menu atas + menu HP
+     HERO          poster pembuka
+     MARQUEE       teks berjalan
+     KOMPONEN UMUM padding, label, judul besar
+     01 PROFIL | 02 AKTIVITAS | 03 QUOTE | 04 GALERI | 05 FOOTER
+     RESPONSIF     tablet & HP
+
+   TIPS CEPAT
+   - Ganti warna  : ubah blok PALET (Engineer = gelap, Designer = terang)
+   - Ganti font   : ubah --font-* di :root DAN <link> Google Fonts di index.html
+   - Ukuran hero  : memakai satuan --u, jadi cukup ubah angka di calc(N * var(--u))
+   - JANGAN ganti nama class yang dipakai JS (tanpa ikut mengubah js/main.js):
+     .anim  .has-cursor  .is-visible  .is-active  .is-hover  .is-on
+     .is-pinned  .is-locked  .menu-open  .in
+   ============================================================ */
+
+/* ---------- VARIABEL: ubah warna, font, dan ukuran dasar di sini ---------- */
+:root {
+    /* Warna latar section gelap (loader, menu, quote, footer) tiap mode.
+       Warna lain tiap mode ada di blok PALET tepat di bawah :root. */
+    --dark-engineer: #000000;
+    --dark-designer: #1f1f1f;
+    --loader-engineer: #000000;
+    /* warna loader + tirai perpindahan halaman: Engineer (hitam) */
+    --loader-designer: #ededed;
+    /* ... Designer (putih/abu terang, sama dengan latar halaman) */
+
+    /* Font (pastikan font-nya juga dimuat di <link> Google Fonts pada index.html) */
+    --font-body: "Crimson Pro", serif;
+    /* paragraf */
+    --font-display: "Bodoni Moda", serif;
+    /* judul besar */
+    --font-title: "Young Serif", serif;
+    /* sub-judul & data */
+    --font-script: "Alex Brush", cursive;
+    /* tulisan tangan (kata beraksen <em>) */
+    --font-script-2: "Allura", cursive;
+    /* tulisan tangan kedua (tanggal, perkenalan) */
+    --font-jp: "Noto Sans JP", sans-serif;
+    /* huruf Jepang */
+    --font-ui: "Jost", sans-serif;
+    /* label kecil, menu, tombol */
+
+    /* Tata letak */
+    --gutter: clamp(20px, 6vw, 96px);
+    /* margin kiri-kanan halaman */
+    --u: min(1vw, 1.777svh);
+    /* 1u = 1% lebar poster referensi 16:9, dibatasi tinggi layar */
+
+    /* Kurva animasi untuk transisi CSS */
+    --ease-out: cubic-bezier(.16, 1, .3, 1);
+    --ease-in-out: cubic-bezier(.76, 0, .24, 1);
+}
+
+/* ---------- PALET: warna tiap mode (ubah warna Engineer / Designer di sini) ----------
+   --paper   latar halaman          --ink      teks utama + garis
+   --paper-2 latar placeholder foto --soft     teks paragraf
+   --muted   label kecil            --dark     latar section gelap
+                                    --on-dark  teks di atas section gelap
+   --band    latar section Quote & Footer   --on-band  teks di atas --band
+   --loader  latar layar loader + tirai     --on-loader teks di atas --loader
+             (Designer: terang, Engineer: hitam)
+   Mode ditentukan atribut data-mode pada <html> di index.html / designer.html. */
+
+/* DESIGNER: terang (juga menjadi nilai bawaan) */
+:root,
+html[data-mode="designer"] {
+    --paper: #ededed;
+    --paper-2: #e4e4e2;
+    --ink: #1f1f1f;
+    --soft: #333333;
+    --muted: #5c5c5a;
+    --dark: var(--dark-designer);
+    --on-dark: #ededed;
+    --loader: var(--loader-designer);
+    --on-loader: #1f1f1f;
+    --band: #e0e0dd;
+    /* latar section Quote & Footer: abu terang, sedikit lebih gelap dari halaman */
+    --on-band: #1f1f1f;
+    /* teks di atas --band */
+}
+
+/* SOFTWARE ENGINEER: gelap (latar hitam, tulisan putih) */
+html[data-mode="engineer"] {
+    --paper: #0d0d0d;
+    --paper-2: #1a1a1a;
+    --ink: #f2f2f0;
+    --soft: #cfcfcb;
+    --muted: #9a9a96;
+    --dark: var(--dark-engineer);
+    --on-dark: #f2f2f0;
+    --loader: var(--loader-engineer);
+    --on-loader: #f2f2f0;
+    --band: var(--dark-engineer);
+    --on-band: #f2f2f0;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    -ms-overflow-style: none;
+    /* IE dan Edge */
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+/* Untuk browser Google Chrome, Safari, dan Opera */
+::-webkit-scrollbar {
+    display: none;
+}
+
+body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+}
+
+body.is-locked {
+    overflow: hidden;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+button {
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: 0;
+    cursor: pointer;
+}
+
+::selection {
+    background: var(--ink);
+    color: var(--paper);
+}
+
+/* ============================================================
+   LOADER
+   Layar pembuka: panel hitam, huruf Jepang, hitungan 000-100.
+   Hanya tampil jika GSAP berhasil dimuat (class .anim). Animasinya ada di js/main.js.
+   ============================================================ */
+.loader {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+}
+
+.anim .loader {
+    display: block;
+}
+
+/* Isi loader (huruf Jepang, bar, hitungan) disembunyikan sampai JS siap menganimasikannya.
+   Tanpa ini, isi loader sempat tampil statis lalu "mengulang dari awal" (terlihat seperti dua loader).
+   JS memunculkannya (visibility: visible) tepat saat animasi dimulai. */
+.anim .loader-inner {
+    visibility: hidden;
+}
+
+.loader-panels {
+    position: absolute;
+    inset: 0;
+    display: flex;
+}
+
+.loader-panel {
+    flex: 1;
+    background: var(--loader);
+    margin-right: -1px;
+}
+
+.loader-inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
+    color: var(--on-loader);
+}
+
+.loader-jp {
+    display: flex;
+    overflow: hidden;
+    font-family: var(--font-jp);
+    font-size: clamp(40px, 7vw, 96px);
+    letter-spacing: .3em;
+    line-height: 1.15;
+}
+
+.loader-jp span {
+    display: inline-block;
+}
+
+.loader-bar {
+    width: min(320px, 60vw);
+    height: 1px;
+    background: color-mix(in srgb, var(--on-loader) 20%, transparent);
+}
+
+.loader-bar i {
+    display: block;
+    height: 100%;
+    background: var(--on-loader);
+    transform: scaleX(0);
+    transform-origin: left;
+}
+
+.loader-meta {
+    width: min(320px, 60vw);
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-ui);
+    font-size: 11px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+}
+
+/* ============================================================
+   KURSOR
+   Titik kursor kustom (hanya di perangkat dengan mouse).
+   ============================================================ */
+.cursor {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 150;
+    width: 10px;
+    height: 10px;
+    margin: -5px 0 0 -5px;
+    border-radius: 50%;
+    background: #fff;
+    mix-blend-mode: difference;
+    pointer-events: none;
+    display: none;
+    transition: width .35s cubic-bezier(.2, .8, .2, 1), height .35s cubic-bezier(.2, .8, .2, 1), margin .35s cubic-bezier(.2, .8, .2, 1);
+}
+
+.has-cursor .cursor {
+    display: block;
+}
+
+.cursor.is-hover {
+    width: 56px;
+    height: 56px;
+    margin: -28px 0 0 -28px;
+}
+
+/* ============================================================
+   NAVIGASI
+   Menu atas (muncul setelah hero lewat) + menu layar penuh untuk HP.
+   Jika menambah/mengurangi menu, sesuaikan juga nth-child delay di bawah.
+   ============================================================ */
+.nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px var(--gutter);
+    color: #fff;
+    mix-blend-mode: difference;
+    transform: translateY(-110%);
+    transition: transform .7s var(--ease-out);
+}
+
+.nav.is-visible,
+.menu-open .nav {
+    transform: none;
+}
+
+.nav-logo {
+    font-family: var(--font-display);
+    font-size: 22px;
+    letter-spacing: .04em;
+}
+
+.nav-logo em {
+    font-family: var(--font-script);
+    font-style: normal;
+    font-size: 26px;
+    margin-left: 4px;
+}
+
+.nav-links {
+    display: flex;
+    gap: clamp(18px, 2.6vw, 40px);
+    font-family: var(--font-ui);
+    font-size: 13px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+}
+
+.nav-links a {
+    position: relative;
+    padding: 4px 0;
+}
+
+.nav-links sup {
+    font-size: 9px;
+    margin-right: 5px;
+    opacity: .6;
+}
+
+.nav-links a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform .5s var(--ease-out);
+}
+
+.nav-links a:hover::after,
+.nav-links a.is-active::after {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+.nav-toggle {
+    display: none;
+    font-family: var(--font-ui);
+    font-size: 13px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+}
+
+.menu {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 var(--gutter);
+    background: var(--dark);
+    color: var(--on-dark);
+    clip-path: inset(0 0 100% 0);
+    visibility: hidden;
+    transition: clip-path .8s var(--ease-in-out), visibility 0s .8s;
+}
+
+.menu-open .menu {
+    clip-path: inset(0 0 0 0);
+    visibility: visible;
+    transition: clip-path .8s var(--ease-in-out);
+}
+
+.menu a {
+    display: block;
+    overflow: hidden;
+    font-family: var(--font-display);
+    font-size: clamp(44px, 12vw, 80px);
+    line-height: 1.15;
+}
+
+.menu a span {
+    display: inline-block;
+    transform: translateY(110%);
+    transition: transform .8s var(--ease-out);
+}
+
+.menu a sup {
+    font-family: var(--font-ui);
+    font-size: 12px;
+    letter-spacing: .1em;
+    vertical-align: top;
+    margin-right: 10px;
+    opacity: .5;
+}
+
+.menu-open .menu a span {
+    transform: none;
+}
+
+.menu a:nth-child(1) span {
+    transition-delay: .25s;
+}
+
+.menu a:nth-child(2) span {
+    transition-delay: .31s;
+}
+
+.menu a:nth-child(3) span {
+    transition-delay: .37s;
+}
+
+.menu a:nth-child(4) span {
+    transition-delay: .43s;
+}
+
+.menu a:nth-child(5) span {
+    transition-delay: .49s;
+}
+
+.menu-foot {
+    margin-top: 48px;
+    font-family: var(--font-ui);
+    font-size: 12px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    opacity: .6;
+}
+
+/* ============================================================
+   HERO
+   Poster pembuka. Semua posisi memakai persen dan ukuran memakai calc(N * var(--u))
+   sehingga proporsinya tetap seperti poster 16:9 di berbagai layar.
+   ============================================================ */
+.hero {
+    position: relative;
+    background: var(--paper);
+}
+
+.stage {
+    position: relative;
+    height: 100vh;
+    height: 100svh;
+    min-height: 480px;
+    overflow: hidden;
+}
+
+/* Bingkai garis tipis mengelilingi hero. */
+.frame {
+    position: absolute;
+    inset: calc(2 * var(--u));
+    border: calc(0.22 * var(--u)) solid var(--ink);
+    z-index: 1;
+    pointer-events: none;
+    clip-path: inset(0 0 0 0);
+}
+
+/* Lapisan BELAKANG hero: huruf Jepang + nama besar (berada di belakang foto). */
+.layer-back {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+}
+
+/* Nama besar di belakang foto. Posisi: left/right/top (%). Ukuran huruf: angka pada calc() dikali --u. */
+.title {
+    position: absolute;
+    left: 5.4%;
+    right: 4.6%;
+    top: 34.8%;
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: calc(16.8 * var(--u));
+    font-variation-settings: "opsz" 20;
+    line-height: 1;
+}
+
+.title .ch {
+    display: block;
+    overflow: hidden;
+    padding: .05em .03em;
+    margin: -.05em -.03em;
+}
+
+.title .ci {
+    display: block;
+}
+
+/* Huruf Jepang kecil di atas nama besar. */
+.jp {
+    position: absolute;
+    left: 5.6%;
+    top: 28.6%;
+    display: flex;
+    gap: calc(1.9 * var(--u));
+    font-family: var(--font-jp);
+    font-weight: 500;
+    font-size: calc(3.4 * var(--u));
+    line-height: 1;
+}
+
+.jp span {
+    display: inline-block;
+}
+
+/* Foto utama (PNG transparan). Geser kiri-kanan lewat "left", ukuran lewat "height". */
+.subject {
+    position: absolute;
+    left: 49.3%;
+    bottom: 0;
+    height: 94.9%;
+    transform: translateX(-50%);
+    z-index: 3;
+}
+
+.subject img {
+    height: 100%;
+    width: auto;
+}
+
+/* Lapisan DEPAN hero: teks-teks kecil yang menumpang di atas foto. */
+.layer-front {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+}
+
+/* Tulisan tangan di kanan-bawah foto. */
+.lenathea {
+    position: absolute;
+    left: 74.4%;
+    top: 59%;
+    font-family: var(--font-script);
+    font-size: calc(5.6 * var(--u));
+    line-height: 1.2;
+}
+
+/* Blok kiri-atas: logo + judul + paragraf perkenalan. */
+.intro {
+    position: absolute;
+    left: 6.4%;
+    top: 7%;
+    display: flex;
+    gap: calc(1.1 * var(--u));
+}
+
+.logo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: calc(0.4 * var(--u));
+}
+
+.logo-jkt {
+    display: flex;
+    align-items: center;
+    font-family: var(--font-ui);
+    font-weight: 300;
+    font-size: calc(1.65 * var(--u));
+    line-height: .9;
+}
+
+.logo-jkt span {
+    display: block;
+}
+
+.logo-jkt .bar {
+    width: calc(0.08 * var(--u));
+    height: calc(2.4 * var(--u));
+    background: var(--ink);
+    margin-left: calc(0.5 * var(--u));
+}
+
+.newera {
+    font-family: var(--font-ui);
+    font-size: calc(0.8 * var(--u));
+    font-style: italic;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 0 calc(0.25 * var(--u));
+}
+
+.newera b {
+    color: transparent;
+    -webkit-text-stroke: calc(0.05 * var(--u)) var(--paper);
+}
+
+.intro h2 {
+    font-family: var(--font-title);
+    font-weight: 400;
+    font-size: calc(1.75 * var(--u));
+    letter-spacing: calc(0.08 * var(--u));
+    line-height: 1;
+    margin-bottom: calc(0.55 * var(--u));
+}
+
+.intro p {
+    font-size: calc(1.05 * var(--u));
+    line-height: 1.45;
+}
+
+/* Tanggal + kredit pembuat (kanan-atas). */
+.dated {
+    position: absolute;
+    left: 71.3%;
+    top: 15.6%;
+    text-align: center;
+}
+
+.dated .date {
+    font-family: var(--font-script-2);
+    font-size: calc(1.85 * var(--u));
+    line-height: 1;
+}
+
+.dated p {
+    font-size: calc(1.05 * var(--u));
+    font-weight: 600;
+    margin-top: calc(0.2 * var(--u));
+}
+
+/* Dekorasi garis menetes (SVG) di pojok kanan-atas. */
+.drips {
+    position: absolute;
+    color: var(--ink);
+    /* warna garis SVG mengikuti tema */
+    right: calc(2 * var(--u));
+    top: calc(2 * var(--u));
+    width: calc(12.6 * var(--u));
+}
+
+.drips svg {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.drips line {
+    stroke-dasharray: 1 1;
+}
+
+/* Petunjuk "Scroll" vertikal di sisi kanan hero. */
+.scroll-cue {
+    position: absolute;
+    right: calc(3.4 * var(--u));
+    bottom: 12%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-ui);
+    font-size: max(10px, calc(0.75 * var(--u)));
+    letter-spacing: .3em;
+    writing-mode: vertical-rl;
+    text-transform: uppercase;
+}
+
+.scroll-cue i {
+    width: 1px;
+    height: calc(6 * var(--u));
+    background: color-mix(in srgb, var(--ink) 20%, transparent);
+    position: relative;
+    overflow: hidden;
+}
+
+.scroll-cue i::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--ink);
+    animation: cue 2s var(--ease-in-out) infinite;
+}
+
+@keyframes cue {
+    0% {
+        transform: translateY(-100%);
+    }
+
+    60%,
+    100% {
+        transform: translateY(100%);
+    }
+}
+
+/* Dua catatan di hero. Di layar lebar menumpang di atas poster; di HP turun ke bawah foto. */
+.notes {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    pointer-events: none;
+}
+
+.notes>* {
+    pointer-events: auto;
+}
+
+.news {
+    position: absolute;
+    left: 6.3%;
+    top: 72.8%;
+    width: calc(29 * var(--u));
+}
+
+.news h3 {
+    font-family: var(--font-title);
+    font-style: italic;
+    font-weight: 400;
+    font-size: calc(1.8 * var(--u));
+    line-height: 1.1;
+    transform: skewX(-8deg);
+    transform-origin: left;
+}
+
+.news p {
+    font-size: calc(1.1 * var(--u));
+    text-align: center;
+    line-height: 1.4;
+    margin-top: calc(0.3 * var(--u));
+}
+
+.question {
+    position: absolute;
+    left: 66.5%;
+    top: 76.5%;
+    width: calc(25.5 * var(--u));
+}
+
+.question h3 {
+    font-family: var(--font-title);
+    font-weight: 400;
+    font-size: calc(1.95 * var(--u));
+    line-height: 1.1;
+}
+
+.question .quote {
+    font-size: calc(1.2 * var(--u));
+    font-weight: 700;
+    text-align: center;
+    margin-top: calc(0.5 * var(--u));
+}
+
+.question .by {
+    font-size: calc(1.1 * var(--u));
+    text-align: right;
+    margin-top: calc(0.7 * var(--u));
+}
+
+/* ============================================================
+   MARQUEE
+   Pita teks berjalan di bawah hero. Kecepatan: durasi "32s" pada .marquee-track.
+   ============================================================ */
+.marquee {
+    position: relative;
+    z-index: 5;
+    overflow: hidden;
+    padding: clamp(14px, 2vw, 26px) 0;
+    background: var(--ink);
+    color: var(--paper);
+}
+
+.marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marquee 32s linear infinite;
+}
+
+.marquee-track span {
+    display: flex;
+    align-items: center;
+    gap: clamp(20px, 3vw, 48px);
+    padding-right: clamp(20px, 3vw, 48px);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(26px, 4.4vw, 64px);
+    white-space: nowrap;
+    line-height: 1.1;
+}
+
+.marquee-track b {
+    font-weight: 400;
+}
+
+.marquee-track .jpx {
+    font-family: var(--font-jp);
+    font-style: normal;
+    font-size: .7em;
+}
+
+.marquee-track .star {
+    font-style: normal;
+    font-size: .5em;
+}
+
+@keyframes marquee {
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+/* ============================================================
+   KOMPONEN UMUM
+   Dipakai berulang di semua section: padding, label kecil (.eyebrow), judul besar (.display).
+   ============================================================ */
+.section {
+    position: relative;
+    padding: clamp(96px, 13vw, 180px) var(--gutter);
+}
+
+.eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    font-family: var(--font-ui);
+    font-size: 12px;
+    letter-spacing: .28em;
+    text-transform: uppercase;
+}
+
+.eyebrow b {
+    font-weight: 500;
+}
+
+.eyebrow::before {
+    content: "";
+    width: 40px;
+    height: 1px;
+    background: currentColor;
+}
+
+.display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(46px, 7.4vw, 124px);
+    line-height: .98;
+    letter-spacing: -.01em;
+}
+
+.display em {
+    font-family: var(--font-script);
+    font-style: normal;
+    font-weight: 400;
+    font-size: 1.05em;
+    letter-spacing: 0;
+}
+
+.w {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: top;
+    padding: .06em .16em .16em;
+    margin: -.06em -.16em -.16em;
+}
+
+.wi {
+    display: inline-block;
+}
+
+/* ============================================================
+   01 PROFIL
+   Foto di kiri, teks + data singkat di kanan.
+   ============================================================ */
+.profile-grid {
+    display: grid;
+    grid-template-columns: 5fr 7fr;
+    gap: clamp(40px, 7vw, 120px);
+    align-items: start;
+    margin-top: clamp(40px, 6vw, 80px);
+}
+
+.profile-media {
+    position: relative;
+}
+
+.profile-img {
+    overflow: hidden;
+    aspect-ratio: 4 / 5;
+    background: var(--paper-2);
+}
+
+.profile-img img {
+    width: 100%;
+    height: 118%;
+    object-fit: cover;
+    object-position: 50% 15%;
+    filter: grayscale(1) contrast(1.05);
+    transition: filter 1.6s ease .4s;
+}
+
+.profile-media.in .profile-img img,
+.profile-media:hover .profile-img img {
+    filter: none;
+}
+
+.profile-media figcaption {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 14px;
+    font-family: var(--font-ui);
+    font-size: 11px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.profile-jp {
+    position: absolute;
+    top: 0;
+    right: calc(-1 * clamp(30px, 4vw, 64px));
+    writing-mode: vertical-rl;
+    font-family: var(--font-jp);
+    font-size: clamp(18px, 2vw, 28px);
+    letter-spacing: .4em;
+}
+
+.profile-body .display {
+    margin-bottom: clamp(24px, 3vw, 40px);
+}
+
+.lead {
+    max-width: 34em;
+    font-size: clamp(19px, 1.7vw, 25px);
+    line-height: 1.5;
+    color: var(--soft);
+}
+
+.facts {
+    margin-top: clamp(40px, 5vw, 64px);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 40px;
+}
+
+.fact {
+    position: relative;
+    padding: 18px 0 20px;
+}
+
+.rule {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--ink);
+    transform-origin: left;
+}
+
+.fact dt {
+    font-family: var(--font-ui);
+    font-size: 11px;
+    letter-spacing: .24em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+}
+
+.fact dd {
+    font-family: var(--font-title);
+    font-size: clamp(18px, 1.5vw, 22px);
+}
+
+.jiko {
+    margin-top: clamp(40px, 5vw, 64px);
+    padding-left: 24px;
+    border-left: 1px solid var(--ink);
+}
+
+.jiko span {
+    font-family: var(--font-ui);
+    font-size: 11px;
+    letter-spacing: .24em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.jiko p {
+    margin-top: 6px;
+    font-family: var(--font-script-2);
+    font-size: clamp(28px, 2.6vw, 40px);
+    line-height: 1.25;
+}
+
+/* ============================================================
+   02 AKTIVITAS
+   Daftar baris besar (nomor, judul, deskripsi, panah).
+   ============================================================ */
+#aktivitas.section {
+    padding-top: 0;
+    /* rapatkan dengan section Profil di atasnya */
+}
+
+.acts-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+.acts-head .display {
+    margin-top: 28px;
+}
+
+.acts-head p {
+    max-width: 26em;
+    font-size: clamp(17px, 1.3vw, 20px);
+    color: var(--soft);
+    line-height: 1.5;
+}
+
+.acts {
+    margin-top: clamp(48px, 6vw, 88px);
+    list-style: none;
+}
+
+.act {
+    position: relative;
+    display: grid;
+    grid-template-columns: 90px 1fr 1.1fr 60px;
+    align-items: center;
+    gap: 24px;
+    padding: clamp(26px, 3vw, 44px) 0;
+}
+
+.acts .act:last-child::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: var(--ink);
+}
+
+.act-num {
+    font-family: var(--font-ui);
+    font-size: 13px;
+    letter-spacing: .2em;
+    color: var(--muted);
+}
+
+.act-title {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(38px, 5.2vw, 84px);
+    line-height: 1;
+    transition: translate .6s var(--ease-out);
+}
+
+.act-desc {
+    font-size: clamp(16px, 1.25vw, 19px);
+    line-height: 1.5;
+    color: var(--soft);
+}
+
+.act-arrow {
+    justify-self: end;
+    width: 48px;
+    height: 48px;
+    border: 1px solid var(--ink);
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-family: var(--font-ui);
+    transition: background .4s, color .4s, rotate .6s var(--ease-out);
+}
+
+.act:hover .act-title {
+    translate: 18px 0;
+    font-style: italic;
+}
+
+.act:hover .act-arrow {
+    background: var(--ink);
+    color: var(--paper);
+    rotate: -45deg;
+}
+
+/* ============================================================
+   03 QUOTE
+   Section gelap berisi kutipan besar.
+   ============================================================ */
+.quote-sec {
+    overflow: hidden;
+    text-align: center;
+    background: var(--band);
+    color: var(--on-band);
+}
+
+.quote-bg {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    white-space: nowrap;
+    pointer-events: none;
+    font-family: var(--font-jp);
+    font-size: clamp(160px, 26vw, 420px);
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1px color-mix(in srgb, var(--on-band) 12%, transparent);
+}
+
+.quote-sec .eyebrow {
+    position: relative;
+}
+
+.quote-text {
+    position: relative;
+    max-width: 14em;
+    margin: clamp(32px, 4vw, 56px) auto 0;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(44px, 7vw, 116px);
+    line-height: 1.05;
+}
+
+.quote-sign {
+    position: relative;
+    display: inline-block;
+    margin-top: clamp(28px, 3vw, 44px);
+    font-family: var(--font-script);
+    font-size: clamp(34px, 3.6vw, 56px);
+}
+
+/* ============================================================
+   04 GALERI
+   Deret panel foto. Di layar lebar di-pin & digeser horizontal oleh JS; di HP bisa di-swipe.
+   ============================================================ */
+.gallery {
+    position: relative;
+    padding: clamp(96px, 12vw, 160px) 0;
+}
+
+.gallery-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 32px;
+    flex-wrap: wrap;
+    padding: 0 var(--gutter);
+}
+
+.gallery-head .display {
+    margin-top: 28px;
+}
+
+.gallery-head p {
+    font-family: var(--font-ui);
+    font-size: 12px;
+    letter-spacing: .24em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.gallery-scroller {
+    margin-top: clamp(40px, 5vw, 64px);
+    padding-bottom: 40px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+}
+
+.gallery-scroller::-webkit-scrollbar {
+    display: none;
+}
+
+.track {
+    display: flex;
+    gap: clamp(16px, 2.4vw, 36px);
+    width: max-content;
+    padding: 0 var(--gutter);
+}
+
+.panel {
+    position: relative;
+    flex: none;
+    height: clamp(360px, 58vh, 620px);
+    scroll-snap-align: center;
+}
+
+.panel-img {
+    height: 100%;
+    overflow: hidden;
+    background: var(--paper-2);
+}
+
+.panel-img img {
+    height: 100%;
+    width: 116%;
+    max-width: none;
+    margin-left: -8%;
+    object-fit: cover;
+}
+
+/* ---------- KARTU PROYEK (isi galeri) ----------
+   Foto thumbnail di atas, nomor + judul + deskripsi di bawah. Ukuran kartu tetap
+   mengikuti .panel (tinggi) + .p-tall / .p-slim (rasio), jadi bentuknya sama seperti panel foto sebelumnya. */
+.panel-card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--paper-2);
+    border: 1px solid color-mix(in srgb, var(--ink) 18%, transparent);
+    transition: border-color .5s;
+}
+
+.panel-card:hover {
+    border-color: var(--ink);
+}
+
+/* Thumbnail mengisi sisa tinggi kartu; foto di dalamnya tetap bergeser pelan saat scroll (diatur JS) */
+.panel-card .panel-img {
+    position: relative;
+    flex: 1 1 0;
+    min-height: 0;
+    height: auto;
+}
+
+.panel-card .panel-img img {
+    position: absolute;
+    top: 0;
+    left: -8%;
+    width: 116%;
+    height: 100%;
+    margin: 0;
+    object-position: 50% 20%;
+    transition: scale .9s var(--ease-out);
+}
+
+.panel-card:hover .panel-img img {
+    scale: 1.05;
+}
+
+.panel-body {
+    flex: none;
+    padding: 16px 18px 20px;
+    border-top: 1px solid color-mix(in srgb, var(--ink) 18%, transparent);
+}
+
+.panel-no {
+    font-family: var(--font-ui);
+    font-size: 11px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.panel-title {
+    margin-top: 6px;
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(22px, 1.9vw, 30px);
+    line-height: 1.1;
+}
+
+/* Baris atas isi kartu: nomor + judul di kiri, tombol panah (link proyek) di kanan */
+.panel-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.panel-head>div {
+    min-width: 0;
+}
+
+.panel-link {
+    flex: none;
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    border: 1px solid color-mix(in srgb, var(--ink) 35%, transparent);
+    border-radius: 50%;
+    font-family: var(--font-ui);
+    transition: background .4s, color .4s, border-color .4s, rotate .6s var(--ease-out);
+}
+
+.panel-card:hover .panel-link {
+    border-color: var(--ink);
+}
+
+/* Saat di-hover / difokus: terisi penuh dan panah berputar (sama seperti panah di bagian Aktivitas) */
+.panel-link:hover,
+.panel-link:focus-visible {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+    rotate: -45deg;
+}
+
+.panel-link:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 3px;
+}
+
+.panel-desc {
+    margin-top: 8px;
+    font-size: clamp(15px, 1.05vw, 17px);
+    line-height: 1.45;
+    color: var(--soft);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Jenis panel galeri: .p-tall (kartu 4:5), .p-slim (kartu 2:3), .p-type (kartu teks), .p-end (kartu penutup). */
+.p-tall {
+    aspect-ratio: 4 / 5;
+}
+
+.p-slim {
+    aspect-ratio: 2 / 3;
+}
+
+.p-type {
+    aspect-ratio: 3 / 4;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: clamp(24px, 2.6vw, 40px);
+    background: var(--ink);
+    color: var(--paper);
+}
+
+.p-type .big-jp {
+    align-self: flex-end;
+    writing-mode: vertical-rl;
+    font-family: var(--font-jp);
+    font-size: clamp(70px, 9vh, 130px);
+    line-height: 1;
+}
+
+.p-type small {
+    font-family: var(--font-ui);
+    font-size: 11px;
+    letter-spacing: .24em;
+    text-transform: uppercase;
+    opacity: .7;
+}
+
+.p-end {
+    aspect-ratio: 3 / 4;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 28px;
+    padding: 0 clamp(10px, 2vw, 40px);
+}
+
+.p-end p {
+    font-family: var(--font-script-2);
+    font-size: clamp(40px, 4.4vw, 72px);
+    line-height: 1.1;
+}
+
+/* Tombol bulat bergaris dengan efek isi saat hover. */
+.btn {
+    align-self: flex-start;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 28px;
+    border: 1px solid var(--ink);
+    border-radius: 999px;
+    font-family: var(--font-ui);
+    font-size: 12px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    transition: color .5s;
+}
+
+.btn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--ink);
+    transform: translateY(101%);
+    transition: transform .5s var(--ease-out);
+}
+
+.btn:hover {
+    color: var(--paper);
+}
+
+.btn:hover::before {
+    transform: none;
+}
+
+.gallery-progress {
+    display: none;
+    height: 1px;
+    margin: 40px var(--gutter) 0;
+    background: color-mix(in srgb, var(--ink) 15%, transparent);
+}
+
+.gallery-progress i {
+    display: block;
+    height: 100%;
+    background: var(--ink);
+    transform: scaleX(0);
+    transform-origin: left;
+}
+
+.gallery.is-pinned {
+    height: 100vh;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.gallery.is-pinned .gallery-scroller {
+    overflow: visible;
+}
+
+.gallery.is-pinned .gallery-progress {
+    display: block;
+}
+
+/* Kartu di layar kecil (< 900px, galeri di-swipe): lebar tetap, tinggi mengikuti isi,
+   semua kartu dalam satu baris sama tinggi. Angka 899 sama dengan breakpoint di js/main.js. */
+@media (max-width: 899px) {
+    .track {
+        align-items: stretch;
+    }
+
+    .panel {
+        height: auto;
+        width: min(74vw, 300px);
+        aspect-ratio: auto;
+    }
+
+    .panel-card .panel-img {
+        flex: none;
+        aspect-ratio: 4 / 5;
+    }
+
+    .panel-desc {
+        display: block;
+    }
+}
+
+/* ============================================================
+   05 KONTAK / FOOTER
+   Link sosial, kredit, dan nama raksasa.
+   ============================================================ */
+.footer {
+    overflow: hidden;
+    padding: clamp(96px, 12vw, 160px) var(--gutter) 0;
+    background: var(--band);
+    color: var(--on-band);
+}
+
+.footer .display {
+    max-width: 9em;
+    margin-top: clamp(24px, 3vw, 40px);
+}
+
+.socials {
+    list-style: none;
+    margin-top: clamp(48px, 6vw, 88px);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-top: 1px solid color-mix(in srgb, var(--on-band) 25%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--on-band) 25%, transparent);
+}
+
+.socials li+li {
+    border-left: 1px solid color-mix(in srgb, var(--on-band) 25%, transparent);
+}
+
+.social {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 26px 22px;
+    font-family: var(--font-title);
+    font-size: clamp(18px, 1.6vw, 24px);
+    transition: color .5s;
+}
+
+.social::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--on-band);
+    transform: translateY(101%);
+    transition: transform .6s var(--ease-out);
+}
+
+.social:hover {
+    color: var(--band);
+}
+
+.social:hover::before {
+    transform: none;
+}
+
+.social span {
+    font-family: var(--font-ui);
+    transition: transform .5s var(--ease-out);
+}
+
+.social:hover span {
+    transform: rotate(45deg);
+}
+
+.footer-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-top: clamp(48px, 6vw, 80px);
+    font-family: var(--font-ui);
+    font-size: 12px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+}
+
+.footer-meta>span:first-child {
+    opacity: .75;
+}
+
+.footer-meta .date {
+    font-family: var(--font-script-2);
+    font-size: 26px;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.to-top {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.to-top i {
+    width: 44px;
+    height: 44px;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-style: normal;
+}
+
+/* Nama raksasa di dasar footer. */
+.footer-giant {
+    display: flex;
+    justify-content: space-between;
+    margin-top: clamp(40px, 5vw, 72px);
+    font-family: var(--font-display);
+    font-size: 21.5vw;
+    line-height: .8;
+    font-variation-settings: "opsz" 20;
+}
+
+.footer-giant .ch {
+    display: block;
+    overflow: hidden;
+}
+
+.footer-giant .ci {
+    display: block;
+}
+
+.footer-copy {
+    padding: 22px 0 26px;
+    text-align: center;
+    font-family: var(--font-ui);
+    font-size: 11px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    opacity: .5;
+}
+
+/* ============================================================
+   SWITCH MODE (Software Engineer <-> Designer)
+   Tombol geser di tengah atas (di HP: tengah bawah). Bisa diklik atau di-drag.
+   Perpindahan halaman + efek tirai diatur di js/main.js bagian "Switch mode".
+   ============================================================ */
+.mode-switch {
+    position: fixed;
+    top: 30px;
+    left: 0;
+    right: 0;
+    margin: -20px auto 0;
+    /* naik setengah tinggi tombol, supaya duduk di garis bingkai hero */
+    z-index: 110;
+    width: max-content;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 3px;
+    background: var(--paper);
+    border: 1px solid var(--ink);
+    border-radius: 999px;
+    font-family: var(--font-ui);
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    user-select: none;
+    touch-action: pan-y;
+    cursor: pointer;
+}
+
+.mode-switch:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 3px;
+}
+
+.menu-open .mode-switch {
+    visibility: hidden;
+    /* sembunyikan saat menu HP terbuka */
+}
+
+/* Bulatan yang menggeser; lebarnya setengah tombol */
+.mode-knob {
+    position: absolute;
+    top: 3px;
+    bottom: 3px;
+    left: 3px;
+    width: calc(50% - 3px);
+    border-radius: 999px;
+    background: var(--ink);
+    transition: transform .6s var(--ease-out);
+}
+
+html[data-mode="designer"] .mode-knob {
+    transform: translateX(100%);
+}
+
+/* Label di atas bulatan; label yang aktif berwarna kebalikan */
+.mode-opt {
+    position: relative;
+    padding: 10px 20px;
+    text-align: center;
+    white-space: nowrap;
+    color: var(--ink);
+    transition: color .5s;
+}
+
+html[data-mode="engineer"] .mode-opt[data-side="engineer"],
+html[data-mode="designer"] .mode-opt[data-side="designer"] {
+    color: var(--paper);
+}
+
+/* Tirai saat pindah halaman (dibuat oleh JS; warna = latar gelap mode tujuan) */
+.mode-wipe {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    display: flex;
+}
+
+.mode-wipe i {
+    flex: 1;
+    background: var(--wipe);
+    margin-right: -1px;
+}
+
+@media (max-width: 900px) {
+    .mode-switch {
+        top: auto;
+        bottom: 22px;
+        margin: 0 auto;
+    }
+}
+
+/* ============================================================
+   RESPONSIF
+   Penyesuaian untuk tablet (<=900px) dan HP (<=560px).
+   ============================================================ */
+@media (max-width: 900px) {
+    .nav-links {
+        display: none;
+    }
+
+    .nav-toggle {
+        display: block;
+    }
+
+    .profile-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-media {
+        max-width: 520px;
+    }
+
+    .act {
+        grid-template-columns: 44px 1fr 44px;
+        row-gap: 10px;
+        gap: 14px;
+    }
+
+    .act-desc {
+        grid-column: 2 / 3;
+    }
+
+    .act-arrow {
+        grid-row: 1;
+        grid-column: 3;
+        width: 40px;
+        height: 40px;
+    }
+
+    .socials {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .socials li:nth-child(3) {
+        border-left: 0;
+    }
+
+    .socials li:nth-child(n+3) {
+        border-top: 1px solid color-mix(in srgb, var(--on-band) 25%, transparent);
+    }
+}
+
+@media (max-width: 560px) {
+    .facts {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-jp {
+        display: none;
+    }
+
+    .socials {
+        grid-template-columns: 1fr;
+    }
+
+    .socials li+li {
+        border-left: 0;
+        border-top: 1px solid color-mix(in srgb, var(--on-band) 25%, transparent);
+    }
+
+    .footer-meta {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+/* Hero di layar tegak (HP) */
+@media (max-aspect-ratio: 1/1) {
+    :root {
+        --u: 1vw;
+    }
+
+    .stage {
+        min-height: 560px;
+    }
+
+    .frame {
+        inset: 3vw;
+        border-width: .5vw;
+    }
+
+    .intro {
+        left: 7%;
+        top: 6%;
+        gap: 2.5vw;
+    }
+
+    .logo-jkt {
+        font-size: 4vw;
+    }
+
+    .logo-jkt .bar {
+        width: .25vw;
+        height: 6vw;
+        margin-left: 1.2vw;
+    }
+
+    .newera {
+        font-size: 2vw;
+        padding: 0 .6vw;
+    }
+
+    .newera b {
+        -webkit-text-stroke-width: .12vw;
+    }
+
+    .intro h2 {
+        font-size: 4.6vw;
+        margin-bottom: 1.4vw;
+    }
+
+    .intro p {
+        font-size: 3vw;
+    }
+
+    .drips {
+        width: 22vw;
+        right: 3vw;
+        top: 3vw;
+    }
+
+    .dated {
+        left: auto;
+        right: 7%;
+        top: 17%;
+        text-align: right;
+    }
+
+    .dated .date {
+        font-size: 5vw;
+    }
+
+    .dated p {
+        font-size: 2.8vw;
+        margin-top: .8vw;
+    }
+
+    .jp {
+        left: 6%;
+        top: 27%;
+        font-size: 6.5vw;
+        gap: 3.5vw;
+    }
+
+    .title {
+        left: 5%;
+        right: 5%;
+        top: 31%;
+        font-size: 21vw;
+    }
+
+    .subject {
+        left: 44%;
+        height: 64%;
+    }
+
+    .lenathea {
+        left: auto;
+        right: 6%;
+        top: 42%;
+        font-size: 10vw;
+    }
+
+    .scroll-cue {
+        right: 5.5vw;
+        bottom: 6%;
+    }
+
+    .notes {
+        position: static;
+        display: grid;
+        gap: 8vw;
+        padding: 10vw 7vw 12vw;
+    }
+
+    .news,
+    .question {
+        position: static;
+        width: auto;
+    }
+
+    .news h3 {
+        font-size: 6vw;
+    }
+
+    .news p {
+        font-size: 4vw;
+        text-align: left;
+        margin-top: 1.5vw;
+    }
+
+    .news p br {
+        display: none;
+    }
+
+    .question h3 {
+        font-size: 6vw;
+    }
+
+    .question .quote {
+        font-size: 4.2vw;
+        text-align: left;
+        margin-top: 1.5vw;
+    }
+
+    .question .by {
+        font-size: 3.8vw;
+        margin-top: 2vw;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    .marquee-track,
+    .scroll-cue i::after {
+        animation: none;
+    }
+}

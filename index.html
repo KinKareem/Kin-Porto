@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="id" data-mode="engineer">
+
+<head>
+    <!-- MODE HALAMAN: data-mode pada <html> menentukan palet warna (engineer = gelap, designer = terang).
+         Halaman Designer ada di designer.html dan memakai CSS + JS yang sama. -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- [GANTI] Judul tab browser dan deskripsi untuk mesin pencari -->
+    <title>Kin Kareem Raya — Software Engineer Portfolio</title>
+    <meta name="description" content="Portofolio Kin Kareem Raya, a Software Engginer. Project by KareemTzy.">
+
+    <!-- Font dari Google Fonts. Jika mengganti font, ubah juga variabel --font-* di css/style.css -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Young+Serif&family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400&family=Alex+Brush&family=Allura&family=Noto+Sans+JP:wght@500&family=Jost:wght@300;400;500&display=swap"
+        rel="stylesheet">
+
+    <!-- Seluruh gaya halaman -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- GSAP untuk animasi. Kalau gagal dimuat, halaman tetap tampil utuh tanpa animasi. -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+    <!-- Skrip kecil ini sengaja tetap inline & di <head>: menandai halaman dengan class "anim"
+         SEBELUM tampil, supaya loader tidak berkedip. Jangan dipindah ke main.js. -->
+    <script>
+        if (window.gsap && window.ScrollTrigger && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            document.documentElement.classList.add('anim');
+        }
+    </script>
+</head>
+
+<body>
+
+    <!--
+      PETA FILE
+        index.html   isi / konten (teks, foto, link)  <-- sebagian besar edit konten di sini
+        css/style.css  tampilan
+        js/main.js     animasi & interaksi
+      Cari tanda [GANTI] untuk menemukan bagian yang biasanya diganti.
+      Foto: simpan di folder img/ (profil/galeri/aktivitas) dan marsha.png (hero).
+    -->
+
+    <!-- ================= LOADER ================= -->
+    <div class="loader" aria-hidden="true">
+        <div class="loader-panels"><i class="loader-panel"></i><i class="loader-panel"></i><i
+                class="loader-panel"></i><i class="loader-panel"></i><i class="loader-panel"></i></div>
+        <div class="loader-inner">
+            <!-- [GANTI] Huruf Jepang di layar loader (satu <span> per karakter) dan nama pada .loader-meta di bawahnya. -->
+            <div class="loader-jp" lang="ja"><span>Web Dev</span></div>
+            <div class="loader-bar"><i></i></div>
+            <div class="loader-meta"><span>Kin Kareem Raya</span><span class="loader-count">000</span></div>
+        </div>
+    </div>
+
+    <!-- ================= SWITCH MODE ================= -->
+    <!-- Tombol geser Software Engineer <-> Designer (bisa diklik atau di-drag).
+         data-url = halaman tujuan. [GANTI] teks label di dalam .mode-opt jika perlu. -->
+    <div class="mode-switch" id="modeSwitch" role="switch" aria-checked="false"
+        aria-label="Ganti tampilan portofolio: Software Engineer atau Designer" tabindex="0" data-url="designer.html">
+        <span class="mode-knob" aria-hidden="true"></span>
+        <span class="mode-opt" data-side="engineer">Engineer</span>
+        <span class="mode-opt" data-side="designer">Creator</span>
+    </div>
+
+    <div class="cursor" aria-hidden="true"></div>
+
+    <!-- ================= NAV ================= -->
+    <!-- Menu atas. Nilai href harus cocok dengan id section di bawah (#profil, #aktivitas, ...).
+    Jika menambah/mengurangi menu, ubah juga daftar di <div class="menu"> setelah ini. -->
+    <header class="nav" id="nav">
+        <a href="#home" class="nav-logo">KareemTzy<em>K.</em></a>
+        <nav class="nav-links" aria-label="Navigasi utama">
+            <a href="#profil"><sup>01</sup>Profile</a>
+            <a href="#aktivitas"><sup>02</sup>Activity</a>
+            <a href="#quote"><sup>03</sup>Quote</a>
+            <a href="#galeri"><sup>04</sup>Gallery</a>
+            <a href="#kontak"><sup>05</sup>Contact</a>
+        </nav>
+        <button class="nav-toggle" aria-expanded="false" aria-controls="menu">Menu</button>
+    </header>
+
+    <div class="menu" id="menu">
+        <a href="#profil"><span><sup>01</sup>Profil</span></a>
+        <a href="#aktivitas"><span><sup>02</sup>Aktivitas</span></a>
+        <a href="#quote"><span><sup>03</sup>Quote</span></a>
+        <a href="#galeri"><span><sup>04</sup>Galeri</span></a>
+        <a href="#kontak"><span><sup>05</sup>Kontak</span></a>
+        <p class="menu-foot">Engineer · IT · Bali</p>
+    </div>
+
+    <main>
+        <!-- ================= HERO ================= -->
+        <section class="hero" id="home">
+            <div class="stage">
+                <div class="frame"></div>
+
+                <div class="layer-back" id="parallax-bg">
+                    <!-- [GANTI] Huruf Jepang kecil (satu <span> per karakter). Hapus seluruh baris ini jika tidak dipakai. -->
+                    <div class="jp" lang="ja" aria-hidden="true">
+                        <span>キ</span><span>ン</span>
+                    </div>
+                    <!-- [GANTI] Nama besar di hero. Tiap huruf dibungkus <span class="ch"><span class="ci">X</span></span>.
+                    Tambah/kurangi blok sesuai jumlah huruf nama kamu (animasi menyesuaikan otomatis). -->
+                    <h1 class="title" aria-label="Marsha">
+                        <span class="ch"><span class="ci">K</span></span><span class="ch"><span
+                                class="ci">A</span></span><span class="ch"><span class="ci">R</span></span><span
+                            class="ch"><span class="ci">E</span></span><span class="ch"><span
+                                class="ci">E</span></span><span class="ch"><span class="ci">M</span></span>
+                    </h1>
+                </div>
+
+                <div class="subject">
+                    <!-- [GANTI] Foto utama hero: PNG berlatar transparan, simpan sejajar dengan index.html. Ubah juga teks alt. -->
+                    <img id="parallax-subject" src="1Kin_Software.png" alt="Marsha Lenathea">
+                </div>
+
+                <div class="layer-front">
+                    <div class="intro">
+                        <div class="logo" aria-label="JKT48 New Era">
+                            <div class="logo-jkt">
+                                <div><span>KIN</span><span></span></div><span class="bar"></span>
+                            </div>
+                            <div class="newera"><b>Information</b>Technology</div>
+                        </div>
+                        <div>
+                            <!-- [GANTI] Judul + paragraf perkenalan singkat (kiri-atas hero). <br> = pindah baris. -->
+                            <h2>JIKOSOUKAI</h2>
+                            <p>A New Talent With High Courious Things,<br>Let's See in The Future.<br>Hello, I'm Kareem
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- [GANTI] Tanggal dan kredit pembuat (kanan-atas hero). -->
+                    <div class="dated">
+                        <div class="date">Pontianak , 07-03-2005</div>
+                        <p>Project KareemTzy</p>
+                    </div>
+
+                    <!-- Dekorasi garis menetes (tidak perlu diubah). -->
+                    <div class="drips" aria-hidden="true">
+                        <svg viewBox="0 0 165 110" fill="none" stroke="currentColor" stroke-linecap="round"
+                            stroke-width="3.2">
+                            <line pathLength="1" x1="4" y1="0" x2="4" y2="16" />
+                            <line pathLength="1" x1="24" y1="0" x2="24" y2="40" />
+                            <line pathLength="1" x1="46" y1="0" x2="46" y2="92" />
+                            <line pathLength="1" x1="68" y1="0" x2="68" y2="64" />
+                            <line pathLength="1" x1="90" y1="0" x2="90" y2="84" />
+                            <line pathLength="1" x1="110" y1="0" x2="110" y2="106" />
+                            <line pathLength="1" x1="132" y1="0" x2="132" y2="56" />
+                            <line pathLength="1" x1="160" y1="0" x2="160" y2="30" />
+                        </svg>
+                    </div>
+
+                    <!-- [GANTI] Tulisan tangan di dekat foto (mis. nama belakang). -->
+                    <div class="lenathea">Raya</div>
+
+                    <a href="#profil" class="scroll-cue">Scroll<i></i></a>
+                </div>
+            </div>
+
+            <!-- Di layar lebar menumpang di atas stage; di HP turun ke bawah foto -->
+            <div class="notes">
+                <!-- [GANTI] Dua catatan kecil di hero: "Current News" dan kutipan. Di HP otomatis turun ke bawah foto. -->
+                <div class="news">
+                    <h3>Current News !!</h3>
+                    <p>Kareem adalah seorang programmer yang sedang berkembang di dunia teknologi informasi.</p>
+                </div>
+                <div class="question">
+                    <h3>The Question Is:</h3>
+                    <p class="quote">AI its Friend, Not an Enemy</p>
+                    <p class="by">~KareemTzy~</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= MARQUEE ================= -->
+        <div class="marquee" aria-hidden="true">
+            <!-- [GANTI] Teks berjalan. Isi kedua <span> harus SAMA PERSIS (diduplikasi agar perulangan mulus). -->
+            <div class="marquee-track">
+                <span>KareemTzy <b class="star">✦</b> <b class="jpx">カレム</b> <b class="star">✦</b> Software Engineer <b
+                        class="star">✦</b> Information Technology <b class="star">✦</b>Articial Intelegent<b
+                        class="star">✦</b></span>
+                <span>KareemTzy <b class="star">✦</b> <b class="jpx">カレム</b> <b class="star">✦</b> Software Engineer <b
+                        class="star">✦</b> Information Technology <b class="star">✦</b>Articial Intelegent<b
+                        class="star">✦</b></span>
+            </div>
+        </div>
+
+        <!-- ================= 01 PROFIL ================= -->
+        <section class="section" id="profil">
+            <span class="eyebrow" data-reveal><b>01</b> Profile</span>
+            <div class="profile-grid">
+                <figure class="profile-media">
+                    <!-- [GANTI] Foto profil (rasio 4:5 paling pas). Ubah juga alt dan teks figcaption di bawahnya. -->
+                    <div class="profile-img"><img src="img/01.jpeg" alt="Potret Marsha Lenathea bergaun cokelat"></div>
+                    <figcaption><span>No. 001 — Portrait</span><span>Engginering</span></figcaption>
+                    <span class="profile-jp" lang="ja" aria-hidden="true">カリーム</span>
+                </figure>
+
+                <div class="profile-body">
+                    <h2 class="display" data-split>Hello, I'm <em>Kareem!</em></h2>
+                    <!-- [GANTI] Paragraf pembuka profil. -->
+                    <p class="lead" data-reveal>
+                        I'm programmer making mark in the information technology
+                        sector. Born in Articial Intellegnt era, doesn't make me Scare.
+                    </p>
+
+                    <!-- [GANTI] Data singkat: <dt> = label, <dd> = isi. Blok <div class="fact"> boleh ditambah (kelipatan 2 paling rapi). -->
+                    <dl class="facts">
+                        <div class="fact"><i class="rule"></i>
+                            <dt>Name</dt>
+                            <dd>Kin Kareem Raya Benami Wijaya</dd>
+                        </div>
+                        <div class="fact"><i class="rule"></i>
+                            <dt>Birthplace</dt>
+                            <dd>Pontianak, 7 Januari 2005</dd>
+                        </div>
+                        <div class="fact"><i class="rule"></i>
+                            <dt>Group</dt>
+                            <dd>Software Engineer</dd>
+                        </div>
+                        <div class="fact"><i class="rule"></i>
+                            <dt>Nickname</dt>
+                            <dd>KareemTzy</dd>
+                        </div>
+                    </dl>
+
+                    <!-- [GANTI] Kalimat perkenalan diri. -->
+                    <blockquote class="jiko" data-reveal>
+                        <span>Introduction · 自己紹介</span>
+                        <p>Let's Be Friends</p>
+                    </blockquote>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= 02 AKTIVITAS ================= -->
+        <section class="section" id="aktivitas">
+            <div class="acts-head">
+                <div>
+                    <span class="eyebrow" data-reveal><b>02</b> Activity</span>
+                    <h2 class="display" data-split>In Front <em>Laptop</em></h2>
+                </div>
+                <p data-reveal>Make AI Friendly For All Users..</p>
+            </div>
+
+            <!-- [GANTI] Daftar aktivitas.
+            Salin satu <li> untuk menambah, lalu ubah nomor (01), judul, dan deskripsi. -->
+            <ul class="acts">
+                <li class="act">
+                    <i class="rule"></i>
+                    <span class="act-num">(01)</span>
+                    <h3 class="act-title">Dream</h3>
+                    <p class="act-desc">Become an Real Engineer In AI Era.</p>
+                    <span class="act-arrow">→</span>
+                </li>
+                <li class="act">
+                    <i class="rule"></i>
+                    <span class="act-num">(02)</span>
+                    <h3 class="act-title">Hobby</h3>
+                    <p class="act-desc">Exercise dan Explore Something New.</p>
+                    <span class="act-arrow">→</span>
+                </li>
+                <li class="act">
+                    <i class="rule"></i>
+                    <span class="act-num">(03)</span>
+                    <h3 class="act-title">Hope</h3>
+                    <p class="act-desc">I Can Make My Self Proud.</p>
+                    <span class="act-arrow">→</span>
+                </li>
+            </ul>
+        </section>
+
+        <!-- ================= 03 QUOTE ================= -->
+        <section class="section quote-sec" id="quote">
+            <!-- [GANTI] Teks Jepang transparan besar di latar quote (dekorasi). -->
+            <div class="quote-bg" lang="ja" aria-hidden="true">カリーム カリーム カリーム</div>
+            <span class="eyebrow" data-reveal><b>03</b> The Question Is</span>
+            <blockquote>
+                <!-- [GANTI] Kalimat quote utama, lalu tanda tangan di bawahnya. -->
+                <p class="quote-text">Failure It's The Best Teacher.</p>
+                <footer class="quote-sign">~KareemTzy~</footer>
+            </blockquote>
+        </section>
+
+        <!-- ================= 04 GALERI ================= -->
+        <section class="gallery" id="galeri">
+            <div class="gallery-head">
+                <div>
+                    <span class="eyebrow" data-reveal><b>04</b> Gallery</span>
+                    <h2 class="display" data-split>My <em>Project</em></h2>
+                </div>
+                <p data-reveal>Scroll To See →</p>
+            </div>
+
+            <div class="gallery-scroller">
+                <!-- [GANTI] Isi galeri berupa kartu proyek: foto thumbnail + nomor, judul, dan deskripsi.
+                Salin satu <article class="panel p-tall panel-card"> (4:5) atau p-slim (2:3) untuk menambah kartu.
+                Ubah src/alt pada <img>, nomor (.panel-no), judul (.panel-title), deskripsi (.panel-desc), dan link proyek (href pada .panel-link).
+                .p-type = kartu teks, .p-end = kartu penutup (taruh paling akhir). -->
+                <div class="track">
+                    <article class="panel p-tall panel-card">
+                        <div class="panel-img"><img src="2.png" alt="Marsha dengan kacamata di jalanan kota"></div>
+                        <div class="panel-body">
+                            <div class="panel-head">
+                                <div>
+                                    <span class="panel-no">No. 01</span>
+                                    <h3 class="panel-title">Street</h3>
+                                </div>
+                                <!-- [GANTI] href="#" dengan link proyek (demo, GitHub, Behance, dll) -->
+                                <a class="panel-link" href="#" target="_blank" rel="noopener noreferrer"
+                                    aria-label="Buka proyek: Street"><span aria-hidden="true">→</span></a>
+                            </div>
+                            <p class="panel-desc">[GANTI] Deskripsi singkat proyek: apa yang dibuat dan teknologi yang
+                                dipakai.</p>
+                        </div>
+                    </article>
+                    <div class="panel p-type">
+                        <small>AI — New Era</small>
+                        <span class="big-jp" lang="ja">マーシャ</span>
+                        <small>Kin Kareem Raya</small>
+                    </div>
+                    <article class="panel p-slim panel-card">
+                        <div class="panel-img"><img src="2.png" alt="Swafoto Marsha berkacamata"></div>
+                        <div class="panel-body">
+                            <div class="panel-head">
+                                <div>
+                                    <span class="panel-no">No. 02</span>
+                                    <h3 class="panel-title">Selfie</h3>
+                                </div>
+                                <!-- [GANTI] href="#" dengan link proyek (demo, GitHub, Behance, dll) -->
+                                <a class="panel-link" href="#" target="_blank" rel="noopener noreferrer"
+                                    aria-label="Buka proyek: Selfie"><span aria-hidden="true">→</span></a>
+                            </div>
+                            <p class="panel-desc">[GANTI] Deskripsi singkat proyek: apa yang dibuat dan teknologi yang
+                                dipakai.</p>
+                        </div>
+                    </article>
+                    <article class="panel p-tall panel-card">
+                        <div class="panel-img"><img src="2.png" alt="Marsha dengan atasan motif bunga"></div>
+                        <div class="panel-body">
+                            <div class="panel-head">
+                                <div>
+                                    <span class="panel-no">No. 03</span>
+                                    <h3 class="panel-title">Editorial</h3>
+                                </div>
+                                <!-- [GANTI] href="#" dengan link proyek (demo, GitHub, Behance, dll) -->
+                                <a class="panel-link" href="#" target="_blank" rel="noopener noreferrer"
+                                    aria-label="Buka proyek: Editorial"><span aria-hidden="true">→</span></a>
+                            </div>
+                            <p class="panel-desc">[GANTI] Deskripsi singkat proyek: apa yang dibuat dan teknologi yang
+                                dipakai.</p>
+                        </div>
+                    </article>
+                    <article class="panel p-slim panel-card">
+                        <div class="panel-img"><img src="2.png" alt="Marsha bergaun kuning di dekat jendela"></div>
+                        <div class="panel-body">
+                            <div class="panel-head">
+                                <div>
+                                    <span class="panel-no">No. 04</span>
+                                    <h3 class="panel-title">Golden Hour</h3>
+                                </div>
+                                <!-- [GANTI] href="#" dengan link proyek (demo, GitHub, Behance, dll) -->
+                                <a class="panel-link" href="#" target="_blank" rel="noopener noreferrer"
+                                    aria-label="Buka proyek: Golden Hour"><span aria-hidden="true">→</span></a>
+                            </div>
+                            <p class="panel-desc">[GANTI] Deskripsi singkat proyek: apa yang dibuat dan teknologi yang
+                                dipakai.</p>
+                        </div>
+                    </article>
+                    <article class="panel p-tall panel-card">
+                        <div class="panel-img"><img src="2.png" alt="Marsha berambut merah di studio"></div>
+                        <div class="panel-body">
+                            <div class="panel-head">
+                                <div>
+                                    <span class="panel-no">No. 05</span>
+                                    <h3 class="panel-title">Studio</h3>
+                                </div>
+                                <!-- [GANTI] href="#" dengan link proyek (demo, GitHub, Behance, dll) -->
+                                <a class="panel-link" href="#" target="_blank" rel="noopener noreferrer"
+                                    aria-label="Buka proyek: Studio"><span aria-hidden="true">→</span></a>
+                            </div>
+                            <p class="panel-desc">[GANTI] Deskripsi singkat proyek: apa yang dibuat dan teknologi yang
+                                dipakai.</p>
+                        </div>
+                    </article>
+                    <article class="panel p-slim panel-card">
+                        <div class="panel-img"><img src="2.png" alt="Marsha duduk di panggung teater"></div>
+                        <div class="panel-body">
+                            <div class="panel-head">
+                                <div>
+                                    <span class="panel-no">No. 06</span>
+                                    <h3 class="panel-title">Teater</h3>
+                                </div>
+                                <!-- [GANTI] href="#" dengan link proyek (demo, GitHub, Behance, dll) -->
+                                <a class="panel-link" href="#" target="_blank" rel="noopener noreferrer"
+                                    aria-label="Buka proyek: Teater"><span aria-hidden="true">→</span></a>
+                            </div>
+                            <p class="panel-desc">[GANTI] Deskripsi singkat proyek: apa yang dibuat dan teknologi yang
+                                dipakai.</p>
+                        </div>
+                    </article>
+                    <article class="panel p-tall panel-card">
+                        <div class="panel-img"><img src="2.png" alt="Marsha dengan rambut dicepol"></div>
+                        <div class="panel-body">
+                            <div class="panel-head">
+                                <div>
+                                    <span class="panel-no">No. 07</span>
+                                    <h3 class="panel-title">Soft</h3>
+                                </div>
+                                <!-- [GANTI] href="#" dengan link proyek (demo, GitHub, Behance, dll) -->
+                                <a class="panel-link" href="#" target="_blank" rel="noopener noreferrer"
+                                    aria-label="Buka proyek: Soft"><span aria-hidden="true">→</span></a>
+                            </div>
+                            <p class="panel-desc">[GANTI] Deskripsi singkat proyek: apa yang dibuat dan teknologi yang
+                                dipakai.</p>
+                        </div>
+                    </article>
+                    <article class="panel p-slim panel-card">
+                        <div class="panel-img"><img src="2.png" alt="Marsha dengan kostum panggung merah"></div>
+                        <div class="panel-body">
+                            <div class="panel-head">
+                                <div>
+                                    <span class="panel-no">No. 08</span>
+                                    <h3 class="panel-title">Kostum</h3>
+                                </div>
+                                <!-- [GANTI] href="#" dengan link proyek (demo, GitHub, Behance, dll) -->
+                                <a class="panel-link" href="#" target="_blank" rel="noopener noreferrer"
+                                    aria-label="Buka proyek: Kostum"><span aria-hidden="true">→</span></a>
+                            </div>
+                            <p class="panel-desc">[GANTI] Deskripsi singkat proyek: apa yang dibuat dan teknologi yang
+                                dipakai.</p>
+                        </div>
+                    </article>
+                    <article class="panel p-tall panel-card">
+                        <div class="panel-img"><img src="2.png" alt="Marsha bergaun cokelat"></div>
+                        <div class="panel-body">
+                            <div class="panel-head">
+                                <div>
+                                    <span class="panel-no">No. 09</span>
+                                    <h3 class="panel-title">Portrait</h3>
+                                </div>
+                                <!-- [GANTI] href="#" dengan link proyek (demo, GitHub, Behance, dll) -->
+                                <a class="panel-link" href="#" target="_blank" rel="noopener noreferrer"
+                                    aria-label="Buka proyek: Portrait"><span aria-hidden="true">→</span></a>
+                            </div>
+                            <p class="panel-desc">[GANTI] Deskripsi singkat proyek: apa yang dibuat dan teknologi yang
+                                dipakai.</p>
+                        </div>
+                    </article> -->
+                    <div class="panel p-end">
+                        <p>Let's Make Something Interesting</p>
+                        <a href="#kontak" class="btn">Contact <span>→</span></a>
+                    </div>
+                </div>
+            </div>
+            <div class="gallery-progress"><i></i></div>
+        </section>
+    </main>
+
+    <!-- ================= 05 KONTAK / FOOTER ================= -->
+    <footer class="footer" id="kontak">
+        <span class="eyebrow" data-reveal><b>05</b> Contact</span>
+        <h2 class="display" data-split>Thanks For <em>Coming!</em></h2>
+
+        <!-- [GANTI] Isi href="#" dengan link akun sebenarnya. Tambah/kurangi <li> sesuai kebutuhan
+             (jumlah kolom diatur di CSS: .socials { grid-template-columns }). -->
+        <ul class="socials">
+            <li><a class="social" href="#" target="_blank" rel="noopener">Instagram <span>↗</span></a></li>
+            <li><a class="social" href="#" target="_blank" rel="noopener">X / Twitter <span>↗</span></a></li>
+            <li><a class="social" href="#" target="_blank" rel="noopener">TikTok <span>↗</span></a></li>
+            <li><a class="social" href="#" target="_blank" rel="noopener">Linkedin <span>↗</span></a></li>
+        </ul>
+
+        <!-- [GANTI] Kredit dan tanggal di footer. -->
+        <div class="footer-meta">
+            <span>Project By KareemTzy</span>
+            <span class="date">Pontianak, 7 March 2005</span>
+            <a href="#home" class="to-top">Kembali ke atas <i>↑</i></a>
+        </div>
+
+        <!-- [GANTI] Nama raksasa di footer (satu huruf per blok, sama seperti judul hero). -->
+        <div class="footer-giant" aria-hidden="true">
+            <span class="ch"><span class="ci">K</span></span><span class="ch"><span class="ci">A</span></span><span
+                class="ch"><span class="ci">R</span></span><span class="ch"><span class="ci">E</span></span><span
+                class="ch"><span class="ci">E</span></span><span class="ch"><span class="ci">M</span></span>
+        </div>
+        <!-- [GANTI] Teks hak cipta. -->
+        <p class="footer-copy">© 2026 KareemTzy</p>
+    </footer>
+
+    <!-- Seluruh animasi & interaksi -->
+    <script src="js/main.js"></script>
+</body>
+
+</html>

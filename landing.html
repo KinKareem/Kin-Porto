@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#0b0b0c">
+    <!-- [GANTI] Judul tab dan deskripsi untuk mesin pencari -->
+    <title>GenZstartUP: Studio website bertenaga AI</title>
+    <meta name="description" content="Kami membuat website bisnis yang cepat dan berkarakter, lengkap dengan asisten AI yang menjawab pelanggan 24 jam.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,700;12..96,800&display=swap" rel="stylesheet">
+
+    <style>
+        /* ============================================================
+           LANDING.CSS : semua gaya halaman ini
+           Daftar isi: Variabel | Dasar | Navigasi | Hero | Layanan (motion) | Proses | Kontak | Responsif
+           Warna & font cukup diubah di bagian VARIABEL.
+           ============================================================ */
+
+        /* ---------- VARIABEL (palet abu, putih, hitam) ---------- */
+        :root {
+            --k: #0b0b0c;      /* hitam */
+            --k2: #17171a;     /* abu sangat gelap */
+            --m: #8c8c92;      /* abu tengah */
+            --l: #e6e6e3;      /* abu terang */
+            --w: #f4f4f2;      /* putih tulang */
+            --line: rgba(244, 244, 242, .22);
+            --f: "Bricolage Grotesque", system-ui, sans-serif;
+            --e: cubic-bezier(.16, 1, .3, 1);
+            --g: clamp(20px, 5vw, 72px);       /* margin kiri-kanan halaman */
+        }
+
+        /* ---------- DASAR ---------- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { background: var(--k); color: var(--w); font: 400 clamp(1.02rem, 1.25vw, 1.2rem)/1.55 var(--f); overflow-x: hidden; }
+        a { color: inherit; text-decoration: none; }
+        ::selection { background: var(--w); color: var(--k); }
+        a:focus-visible { outline: 3px solid var(--m); outline-offset: 4px; }
+        .btn {
+            display: inline-flex; align-items: center; padding: .95em 1.7em; border: 1px solid var(--w); border-radius: 99px;
+            font-weight: 500; font-size: .95rem; transition: background .35s, color .35s;
+        }
+        .btn:hover, .btn:focus-visible { background: var(--w); color: var(--k); }
+        .btn-solid { background: var(--w); color: var(--k); }
+        .btn-solid:hover, .btn-solid:focus-visible { background: transparent; color: var(--w); }
+
+        /* ---------- NAVIGASI ---------- */
+        .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; padding: 20px var(--g); transition: background .4s; }
+        .nav.is-scrolled { background: rgba(11, 11, 12, .8); backdrop-filter: blur(12px); }
+        .logo { font-weight: 800; font-size: 1.4rem; letter-spacing: -.04em; }
+        .nav-links { display: flex; align-items: center; gap: clamp(18px, 3vw, 40px); font-weight: 500; font-size: .95rem; }
+        .nav-links a:not(.btn) { opacity: .8; transition: opacity .3s; }
+        .nav-links a:not(.btn):hover { opacity: 1; }
+        .nav .btn { padding: .6em 1.2em; }
+
+        /* ---------- HERO (cincin berputar = motion graphic) ---------- */
+        .hero { position: relative; overflow: hidden; min-height: 100svh; display: flex; flex-direction: column; justify-content: flex-end; padding: 120px var(--g) clamp(28px, 5vw, 64px); }
+        .rings { position: absolute; right: -6vw; top: 50%; width: min(62vw, 820px); translate: 0 -50%; color: rgba(244, 244, 242, .32); }
+        .rings g { transform-origin: 300px 300px; animation: spin 46s linear infinite; }
+        .rings .r2 { animation-duration: 28s; animation-direction: reverse; }
+        .rings .r3 { animation-duration: 16s; }
+        @keyframes spin { to { rotate: 360deg; } }
+        h1 { position: relative; font: 800 clamp(3rem, 10.4vw, 10.5rem)/.9 var(--f); letter-spacing: -.05em; }
+        .ln { display: block; overflow: hidden; padding-bottom: .1em; }
+        .ln > span { display: block; }
+        .hero-foot { position: relative; display: flex; justify-content: space-between; align-items: flex-end; gap: 32px; flex-wrap: wrap; margin-top: clamp(24px, 4vw, 56px); }
+        .hero-sub { max-width: 38ch; font-size: clamp(1.1rem, 1.6vw, 1.45rem); line-height: 1.4; }
+        .hero-cta { display: flex; gap: 12px; flex-wrap: wrap; }
+
+        /* ---------- LAYANAN: tiap scroll menampilkan satu layanan + animasi contoh website ---------- */
+        .show { min-height: 100svh; display: grid; grid-template-columns: 1fr 1.15fr; gap: clamp(28px, 5vw, 80px); align-items: center; padding: 100px var(--g) 40px; background: var(--l); color: var(--k); }
+        h2 { font: 700 clamp(2.3rem, 6vw, 6rem)/.95 var(--f); letter-spacing: -.045em; }
+        .show h2 { font-size: clamp(2rem, 4.4vw, 4.4rem); margin-bottom: clamp(20px, 3vw, 40px); }
+        .svc { padding: 18px 0 18px 22px; border-left: 3px solid rgba(11, 11, 12, .15); opacity: .38; transition: opacity .5s, border-color .5s; }
+        .svc.on { opacity: 1; border-color: var(--k); }
+        .svc h3 { font: 700 clamp(1.3rem, 2.2vw, 2rem)/1.1 var(--f); letter-spacing: -.03em; }
+        .svc p { max-height: 0; overflow: hidden; max-width: 40ch; transition: max-height .6s var(--e), margin .6s; }
+        .svc.on p { max-height: 8em; margin-top: 8px; }
+        .svc small { display: block; margin-top: 6px; font-weight: 500; color: #55555a; }
+        /* Bingkai browser tempat animasi diputar */
+        .device { position: relative; width: 100%; aspect-ratio: 4/3; background: var(--k); border-radius: 18px; padding: 34px 10px 10px; box-shadow: 0 40px 80px -30px rgba(0, 0, 0, .5); }
+        .device::before { content: ""; position: absolute; left: 16px; top: 13px; width: 8px; height: 8px; border-radius: 50%; background: var(--m); box-shadow: 14px 0 var(--m), 28px 0 var(--m); }
+        .screen { position: relative; width: 100%; height: 100%; background: var(--w); border-radius: 8px; overflow: hidden; }
+        .scene { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 5%; padding: 5%; opacity: 0; transition: opacity .4s; }
+        .scene.on { opacity: 1; }
+        .scene i { display: block; background: #cfcfcc; border-radius: 4px; }
+        /* Animasi 1: landing page */
+        .m-nav { display: flex; justify-content: space-between; align-items: center; height: 7%; }
+        .m-nav > i { width: 18%; height: 60%; background: var(--k); }
+        .m-nav > span { display: flex; gap: 6px; width: 36%; }
+        .m-nav span i { flex: 1; height: 6px; }
+        .m-hero { display: flex; gap: 5%; flex: 1.2; }
+        .m-txt { flex: 1.1; display: flex; flex-direction: column; gap: 7px; justify-content: center; }
+        .m-txt .h { height: 14px; background: var(--k); }
+        .m-txt .w2 { width: 70%; }
+        .m-txt .p { height: 7px; }
+        .m-txt .w3 { width: 55%; }
+        .btn-m { width: 34%; height: 18px; margin-top: 6px; border-radius: 99px; background: var(--k); }
+        .m-img { flex: 1; border-radius: 8px; background: linear-gradient(135deg, #8c8c92, #e0e0dd); }
+        .m-cards { display: flex; gap: 4%; height: 26%; }
+        .m-cards i { flex: 1; height: 100%; border-radius: 8px; background: #dcdcd9; }
+        /* Animasi 2: web app + dashboard */
+        .s2 { flex-direction: row; }
+        .s2 aside { width: 16%; display: flex; flex-direction: column; gap: 10px; }
+        .s2 aside i { height: 10px; }
+        .d-main { flex: 1; display: flex; flex-direction: column; gap: 4%; }
+        .d-top { display: flex; gap: 4%; }
+        .d-top div { flex: 1; padding: 6px 9px; border-radius: 8px; background: #e3e3e0; font-weight: 800; font-size: clamp(.9rem, 2vw, 1.5rem); letter-spacing: -.03em; }
+        .d-chart { position: relative; flex: 1; display: flex; align-items: flex-end; gap: 3%; border-bottom: 2px solid #cfcfcc; }
+        .d-chart i { flex: 1; height: var(--h); background: var(--k); border-radius: 3px 3px 0 0; transform-origin: bottom; }
+        .d-line { position: absolute; inset: 0; width: 100%; height: 100%; fill: none; stroke: var(--m); stroke-width: 3; stroke-dasharray: 1; stroke-dashoffset: 0; vector-effect: non-scaling-stroke; }
+        .d-line path { vector-effect: non-scaling-stroke; }
+        /* Animasi 3: chatbot AI */
+        .s3 { gap: 3.5%; }
+        .c-head { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: .9rem; }
+        .c-head i { width: 22px; height: 22px; border-radius: 50%; background: var(--k); }
+        .msg { max-width: 74%; padding: .55em .85em; border-radius: 14px; font-size: clamp(.62rem, 1.25vw, .9rem); line-height: 1.3; }
+        .me { align-self: flex-end; background: var(--k); color: var(--w); border-bottom-right-radius: 3px; }
+        .bot { align-self: flex-start; background: #e3e3e0; border-bottom-left-radius: 3px; }
+        /* Animasi 4: redesign sebelum/sesudah */
+        .s4 { padding: 0; gap: 0; }
+        .old, .new { position: absolute; inset: 0; }
+        .old { background: #bdbdba; }
+        .old i { position: absolute; border: 2px solid #6d6d70; background: #d6d6d3; }
+        .new { display: flex; flex-direction: column; gap: 5%; padding: 5%; background: var(--w); clip-path: inset(0 100% 0 0); }
+        .hd { position: absolute; top: 0; bottom: 0; left: 0; width: 3px; background: var(--k); }
+        .tag { position: absolute; top: 10px; padding: .2em .7em; border-radius: 99px; background: var(--k); color: var(--w); font-size: .72rem; font-weight: 700; z-index: 2; }
+
+        /* ---------- PROSES (berurutan, jadi pakai nomor) ---------- */
+        .sec { padding: clamp(90px, 13vw, 190px) var(--g); }
+        .sec-h { max-width: 15ch; }
+        .dark2 { background: var(--k2); }
+        .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(20px, 3vw, 44px); margin-top: clamp(40px, 6vw, 80px); }
+        .step { border-top: 2px solid var(--w); padding-top: 18px; }
+        .step b { display: block; font: 800 clamp(3rem, 6vw, 5.6rem)/1 var(--f); letter-spacing: -.06em; margin-bottom: 18px; color: var(--m); }
+        .step h3 { font: 700 1.5rem/1.1 var(--f); letter-spacing: -.03em; margin-bottom: 8px; }
+        .step p { color: var(--l); opacity: .85; }
+
+        /* ---------- KONTAK ---------- */
+        .cta { position: relative; overflow: hidden; min-height: 90svh; display: flex; flex-direction: column; justify-content: center; }
+        .cta > :not(canvas) { position: relative; z-index: 1; }      /* teks & tombol di atas wallpaper */
+        .cta h2 { max-width: 14ch; font-size: clamp(2.6rem, 8vw, 8rem); }
+        /* Wallpaper: jaringan partikel (canvas, diatur JS) + dua bola abu besar yang melayang pelan */
+        .cta-bg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+        .cta::before, .cta::after { content: ""; position: absolute; border-radius: 50%; filter: blur(60px); background: radial-gradient(circle, rgba(140, 140, 146, .35), transparent 70%); animation: drift 18s ease-in-out infinite alternate; }
+        .cta::before { width: 46vw; height: 46vw; left: -10vw; top: -12vw; }
+        .cta::after { width: 38vw; height: 38vw; right: -8vw; bottom: -14vw; animation-duration: 24s; animation-direction: alternate-reverse; }
+        @keyframes drift { to { translate: 8vw 6vw; } }
+        .cta-btns { display: flex; flex-wrap: wrap; gap: 12px; margin-top: clamp(28px, 4vw, 52px); }
+        .cta-btns .btn { font-size: clamp(1rem, 1.5vw, 1.25rem); }
+        /* Teks raksasa: tautan "Our's Team Member" */
+        .folio { display: block; padding: clamp(36px, 7vw, 100px) var(--g); border-top: 1px solid var(--line); font: 800 clamp(2.6rem, 10.4vw, 10.5rem)/.9 var(--f); letter-spacing: -.055em; color: transparent; -webkit-text-stroke: 1.5px var(--w); transition: color .5s; }
+        .folio:hover, .folio:focus-visible { color: var(--w); }
+        footer { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 22px var(--g) 30px; border-top: 1px solid var(--line); font-size: .9rem; color: var(--l); }
+
+        /* ---------- RESPONSIF ---------- */
+        @media (max-width: 860px) {
+            .nav-links a:not(.btn) { display: none; }
+            .show { grid-template-columns: 1fr; gap: 20px; padding-top: 84px; }
+            .show .device { order: -1; }
+            .svc:not(.on) { display: none; }   /* di HP hanya layanan yang aktif ditampilkan */
+            .device { width: min(100%, calc(46svh * 4 / 3)); margin-inline: auto; }   /* bingkai tidak lebih tinggi dari 46% layar */
+            .btn { min-height: 46px; }                                                /* area ketuk nyaman untuk jari */
+            .nav, .hero, .show, .sec, footer { padding-left: max(var(--g), env(safe-area-inset-left)); padding-right: max(var(--g), env(safe-area-inset-right)); }
+            .cta-btns .btn, .hero-cta .btn { flex: 1 1 200px; justify-content: center; }
+            .steps { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 520px) { .steps { grid-template-columns: 1fr; } .rings { right: -30vw; width: 90vw; } .folio { -webkit-text-stroke-width: 1px; } }
+        /* Layar pendek (HP landscape): tinggi hero & layanan mengikuti isi, jangan dipaksa satu layar */
+        @media (max-height: 560px) { .hero, .show, .cta { min-height: 0; } .hero { padding-top: 90px; } .show { padding-top: 84px; } }
+        /* Perangkat sentuh tidak punya hover: teks "Our's Team Member" langsung terisi */
+        @media (hover: none) { .folio { color: var(--w); } }
+        @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .rings g, .cta::before, .cta::after { animation: none; } * { transition: none !important; } }
+    </style>
+</head>
+<body>
+
+    <!-- ================= NAVIGASI ================= -->
+    <header class="nav">
+        <!-- [GANTI] Nama studio -->
+        <a class="logo" href="#top">GenZstartUP</a>
+        <nav class="nav-links">
+            <a href="#layanan">Layanan</a>
+            <a href="#proses">Proses</a>
+            <!-- [GANTI] Isi href dengan nama file halaman portofolio kamu -->
+            <a href="index.html">Portofolio</a>
+            <a class="btn" href="#kontak">Hubungi kami</a>
+        </nav>
+    </header>
+
+    <main id="top">
+        <!-- ================= HERO ================= -->
+        <section class="hero">
+            <svg class="rings" viewBox="0 0 600 600" aria-hidden="true" fill="none" stroke="currentColor">
+                <g><circle cx="300" cy="300" r="290" stroke-dasharray="2 12"/></g>
+                <g class="r2"><circle cx="300" cy="300" r="220" stroke-dasharray="46 16"/></g>
+                <g class="r3"><circle cx="300" cy="300" r="150"/><circle cx="300" cy="150" r="7" fill="currentColor"/></g>
+                <circle cx="300" cy="300" r="70" fill="currentColor" stroke="none" opacity=".1"/>
+            </svg>
+            <h1>
+                <span class="ln"><span>Website yang</span></span>
+                <span class="ln"><span>bekerja saat</span></span>
+                <span class="ln"><span>kamu tidur.</span></span>
+            </h1>
+            <div class="hero-foot">
+                <!-- [GANTI] Kalimat pembuka -->
+                <p class="hero-sub">Kami membuat website bisnis yang cepat dan berkarakter, lengkap dengan asisten AI yang menjawab pelanggan 24 jam.</p>
+                <div class="hero-cta">
+                    <a class="btn btn-solid" href="#kontak">Konsultasi gratis</a>
+                    <a class="btn" href="index.html">Lihat portofolio</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= LAYANAN: terkunci saat scroll, satu layanan tampil per tahap ================= -->
+        <section class="show" id="layanan">
+            <div>
+                <h2>Yang kami kerjakan</h2>
+                <!-- [GANTI] Judul, deskripsi, dan harga tiap layanan. Urutannya sama dengan 4 animasi di sebelah kanan. -->
+                <div class="svc on"><h3>Landing page &amp; company profile</h3><p>Satu halaman yang jelas untuk menjelaskan bisnismu dan mengajak pengunjung menghubungimu.</p><small>Mulai Rp [GANTI]</small></div>
+                <div class="svc"><h3>Web app &amp; dashboard</h3><p>Sistem pemesanan, katalog, atau dashboard internal yang dibuat sesuai alur kerjamu.</p><small>Mulai Rp [GANTI]</small></div>
+                <div class="svc"><h3>Chatbot &amp; otomasi AI</h3><p>Asisten yang menjawab pertanyaan pelanggan dari data bisnismu, dan merapikan pesan serta pesanan.</p><small>Mulai Rp [GANTI]</small></div>
+                <div class="svc"><h3>Redesign website lama</h3><p>Tampilan baru, loading lebih cepat, dan isi yang lebih mudah dipahami tanpa mulai dari nol.</p><small>Mulai Rp [GANTI]</small></div>
+            </div>
+
+            <div class="device" aria-hidden="true">
+                <div class="screen">
+                    <!-- 1. Landing page tersusun sendiri -->
+                    <div class="scene s1 on">
+                        <div class="m-nav"><i></i><span><i></i><i></i><i></i></span></div>
+                        <div class="m-hero">
+                            <div class="m-txt"><i class="h"></i><i class="h w2"></i><i class="p"></i><i class="p w3"></i><b class="btn-m"></b></div>
+                            <div class="m-img"></div>
+                        </div>
+                        <div class="m-cards"><i></i><i></i><i></i></div>
+                    </div>
+                    <!-- 2. Dashboard: angka naik, grafik tumbuh -->
+                    <div class="scene s2">
+                        <aside><i></i><i></i><i></i><i></i><i></i></aside>
+                        <div class="d-main">
+                            <div class="d-top"><div data-n="128">128</div><div data-n="36">36</div><div data-n="92">92</div></div>
+                            <div class="d-chart">
+                                <i style="--h:35%"></i><i style="--h:55%"></i><i style="--h:42%"></i><i style="--h:70%"></i><i style="--h:58%"></i><i style="--h:88%"></i><i style="--h:76%"></i>
+                                <svg class="d-line" viewBox="0 0 200 100" preserveAspectRatio="none"><path pathLength="1" d="M0 80 L33 62 L66 70 L100 38 L133 50 L166 14 L200 24"/></svg>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 3. Chatbot AI membalas pelanggan -->
+                    <div class="scene s3">
+                        <div class="c-head"><i></i>Asisten AI</div>
+                        <p class="msg me">Halo, toko buka sampai jam berapa?</p>
+                        <p class="msg bot">Kami buka setiap hari pukul 09.00 sampai 21.00. Mau pesan sekarang?</p>
+                        <p class="msg me">Mau, 2 paket A ya.</p>
+                        <p class="msg bot">Siap, 2 paket A sudah dicatat. Total Rp 150.000.</p>
+                    </div>
+                    <!-- 4. Redesign: tampilan lama berubah jadi baru -->
+                    <div class="scene s4">
+                        <div class="old">
+                            <span class="tag" style="left:10px">Sebelum</span>
+                            <i style="left:6%;top:16%;width:52%;height:20%"></i><i style="left:34%;top:30%;width:50%;height:16%;rotate:-2deg"></i>
+                            <i style="left:8%;top:54%;width:30%;height:26%"></i><i style="left:44%;top:58%;width:44%;height:12%;rotate:1.5deg"></i>
+                        </div>
+                        <div class="new">
+                            <span class="tag" style="right:10px">Sesudah</span>
+                            <div class="m-nav"><i></i><span><i></i><i></i><i></i></span></div>
+                            <div class="m-hero">
+                                <div class="m-txt"><i class="h"></i><i class="h w2"></i><i class="p"></i><b class="btn-m"></b></div>
+                                <div class="m-img"></div>
+                            </div>
+                            <div class="m-cards"><i></i><i></i><i></i></div>
+                        </div>
+                        <div class="hd"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PROSES ================= -->
+        <section class="sec dark2" id="proses">
+            <h2 class="sec-h">Dari ngobrol sampai rilis</h2>
+            <!-- [GANTI] Tahapan sesuai caramu bekerja -->
+            <div class="steps">
+                <div class="step"><b>1</b><h3>Ngobrol</h3><p>Kami dengarkan bisnis, target, dan pelangganmu. Kamu dapat estimasi biaya dan waktu.</p></div>
+                <div class="step"><b>2</b><h3>Rancang</h3><p>Sketsa dan tampilan dibuat dulu untuk kamu setujui sebelum satu baris kode ditulis.</p></div>
+                <div class="step"><b>3</b><h3>Bangun</h3><p>Website dan asisten AI dikerjakan, lalu diuji di HP, tablet, dan laptop.</p></div>
+                <div class="step"><b>4</b><h3>Rilis &amp; rawat</h3><p>Website online di domainmu, kamu dilatih mengelolanya, dan kami siap memperbaiki.</p></div>
+            </div>
+        </section>
+
+        <!-- ================= KONTAK ================= -->
+        <section class="sec cta" id="kontak">
+            <canvas class="cta-bg" aria-hidden="true"></canvas>
+            <h2>Ceritakan idemu. Kami balas dalam satu hari kerja.</h2>
+            <div class="cta-btns">
+                <!-- [GANTI] Nomor WhatsApp (format 62812xxxx tanpa + atau 0) dan alamat email -->
+                <a class="btn btn-solid" href="https://wa.me/62XXXXXXXXXX" target="_blank" rel="noopener noreferrer">Chat WhatsApp</a>
+                <a class="btn" href="mailto:[GANTI]@email.com">[GANTI]@email.com</a>
+            </div>
+        </section>
+        <!-- [GANTI] Isi href dengan halaman tim atau portofolio kamu -->
+        <a class="folio" href="index.html">Our's Team Member</a>
+    </main>
+
+    <footer>
+        <!-- [GANTI] Nama studio -->
+        <span>&copy; <span id="yr"></span> GenZstartUP</span>
+        <span>Website bertenaga AI</span>
+    </footer>
+
+    <!-- GSAP untuk animasi. Jika gagal dimuat, halaman tetap terbaca tanpa gerak. -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script>
+        /* ============================================================
+           LANDING.JS : animasi
+           Daftar isi: 1 Dasar | 5 Wallpaper partikel (kontak) | 2 Adegan pembuka | 3 Animasi contoh website | 4 Layanan terkunci saat scroll
+           ============================================================ */
+        (() => {
+            const $ = (s, c = document) => c.querySelector(s), $$ = (s, c = document) => [...c.querySelectorAll(s)];
+            const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            /* ---------- 1. DASAR ---------- */
+            $('#yr').textContent = new Date().getFullYear();
+            addEventListener('scroll', () => $('.nav').classList.toggle('is-scrolled', scrollY > 40), { passive: true });
+            /* ---------- 5. WALLPAPER PARTIKEL (latar section kontak) ----------
+               Titik-titik melayang pelan, saling terhubung garis jika berdekatan, dan menjauh dari kursor. */
+            const cv = $('.cta-bg'), ctx = cv.getContext('2d'), sec = cv.parentElement;
+            const DENSITY = innerWidth < 700 ? 24000 : 14000;   // luas (px) per partikel: makin kecil = makin banyak partikel
+            const LINK = 130;        // jarak maksimal dua partikel tersambung garis
+            const ptr = { x: -999, y: -999 };
+            let W, H, dots = [], raf;
+            const init = () => {
+                const dpr = Math.min(devicePixelRatio, 2);
+                W = sec.clientWidth; H = sec.clientHeight;
+                cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+                dots = Array.from({ length: Math.round(W * H / DENSITY) }, () => ({
+                    x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - .5) * .4, vy: (Math.random() - .5) * .4, r: 1 + Math.random() * 1.6
+                }));
+            };
+            const loop = () => {
+                ctx.clearRect(0, 0, W, H);
+                for (const d of dots) {
+                    d.x += d.vx; d.y += d.vy;
+                    if (d.x < 0 || d.x > W) d.vx *= -1;
+                    if (d.y < 0 || d.y > H) d.vy *= -1;
+                    const dx = d.x - ptr.x, dy = d.y - ptr.y, m = Math.hypot(dx, dy);
+                    if (m < 140 && m > 0) { d.x += dx / m * 1.2; d.y += dy / m * 1.2; }
+                }
+                for (let i = 0; i < dots.length; i++) for (let j = i + 1; j < dots.length; j++) {
+                    const a = dots[i], b = dots[j], dist = Math.hypot(a.x - b.x, a.y - b.y);
+                    if (dist < LINK) {
+                        ctx.strokeStyle = `rgba(244,244,242,${(1 - dist / LINK) * .28})`;
+                        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+                    }
+                }
+                ctx.fillStyle = 'rgba(244,244,242,.7)';
+                for (const d of dots) { ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, 6.283); ctx.fill(); }
+                if (!reduce) raf = requestAnimationFrame(loop);
+            };
+            init(); addEventListener('resize', init);
+            sec.addEventListener('pointermove', e => { const r = sec.getBoundingClientRect(); ptr.x = e.clientX - r.left; ptr.y = e.clientY - r.top; });
+            sec.addEventListener('pointerleave', () => { ptr.x = ptr.y = -999; });
+            // Hanya digambar saat section terlihat (hemat baterai)
+            new IntersectionObserver(([e]) => { cancelAnimationFrame(raf); if (e.isIntersecting) loop(); }).observe(sec);
+
+            if (!window.gsap || reduce) return;           // tanpa GSAP / mode kurangi gerakan: tampilan statis
+            gsap.registerPlugin(ScrollTrigger);
+
+            /* ---------- 2. ADEGAN PEMBUKA ---------- */
+            gsap.from('.ln > span', { yPercent: 110, duration: 1.3, ease: 'expo.out', stagger: .12, delay: .2 });
+            gsap.from('.rings', { opacity: 0, scale: .85, duration: 2, ease: 'power3.out' });
+            gsap.from('.hero-foot > *, .nav', { opacity: 0, y: 16, duration: 1, stagger: .12, delay: .8, clearProps: 'transform' });
+
+            /* ---------- 3. ANIMASI CONTOH WEBSITE ----------
+               Tiap animasi = satu timeline yang berulang. "duration" = lama gerak, angka terakhir = jeda mulai. */
+            const T = yoyo => gsap.timeline({ paused: true, repeat: -1, repeatDelay: 1.2, yoyo: !!yoyo });
+            const fade = (tl, s) => tl.to([...s.children], { opacity: 0, duration: .4 }, '+=1.6');   // memudar sebelum mengulang
+
+            const tls = [
+                // 1. Landing page tersusun: menu, judul, tombol, gambar, kartu
+                (() => { const s = $('.s1');
+                    return fade(T()
+                        .from($('.m-nav', s), { y: -16, opacity: 0, duration: .5 })
+                        .from($$('.h, .p', s), { scaleX: 0, transformOrigin: 'left', duration: .6, stagger: .12 }, '>-.1')
+                        .from($('.btn-m', s), { scale: 0, ease: 'back.out(2)', duration: .5 })
+                        .from($('.m-img', s), { clipPath: 'inset(100% 0 0 0)', duration: .9, ease: 'power3.out' }, '<')
+                        .from($$('.m-cards i', s), { yPercent: 60, opacity: 0, stagger: .12, duration: .6, ease: 'power3.out' }), s); })(),
+                // 2. Dashboard: menu geser masuk, angka naik, grafik batang tumbuh, garis tergambar
+                (() => { const s = $('.s2');
+                    const tl = T()
+                        .from($('aside', s), { xPercent: -40, opacity: 0, duration: .6 })
+                        .from($$('.d-top div', s), { y: 20, opacity: 0, stagger: .12, duration: .5 }, '<.1')
+                        .from($$('.d-chart i', s), { scaleY: 0, stagger: .08, duration: .6, ease: 'power3.out' }, '>-.2')
+                        .from($('.d-line path', s), { strokeDashoffset: 1, duration: 1.2, ease: 'power2.inOut' }, '<.3');
+                    $$('[data-n]', s).forEach(b => tl.fromTo(b, { textContent: 0 }, { textContent: b.dataset.n, snap: { textContent: 1 }, duration: 1.2, ease: 'power2.out' }, .4));
+                    return fade(tl, s); })(),
+                // 3. Chatbot: pesan pelanggan naik, balasan AI "diketik"
+                (() => { const s = $('.s3');
+                    const tl = T().from($('.c-head', s), { opacity: 0, y: -10, duration: .4 });
+                    $$('.msg', s).forEach((m, i) => tl.from(m, m.classList.contains('bot')
+                        ? { clipPath: 'inset(0 100% 0 0)', opacity: 0, duration: .9, ease: 'power2.out' }
+                        : { y: 16, opacity: 0, duration: .45, ease: 'power3.out' }, i ? '+=.5' : '+=.2'));
+                    return fade(tl, s); })(),
+                // 4. Redesign: garis penyapu membuka tampilan baru, lalu kembali ke yang lama
+                (() => { const s = $('.s4');
+                    return T(true)
+                        .fromTo($('.new', s), { clipPath: 'inset(0 100% 0 0)' }, { clipPath: 'inset(0 0% 0 0)', duration: 1.8, ease: 'power2.inOut' })
+                        .fromTo($('.hd', s), { left: '0%' }, { left: '100%', duration: 1.8, ease: 'power2.inOut' }, '<'); })()
+            ];
+
+            /* ---------- 4. LAYANAN TERKUNCI SAAT SCROLL ----------
+               Section dikunci sepanjang 300% tinggi layar; tiap seperempat scroll = satu layanan + satu animasi.
+               Di layar pendek tanpa kunci, layanan berganti otomatis. */
+            const items = $$('.svc'), scenes = $$('.scene');
+            let cur = -1;
+            const show = i => {
+                if (i === cur) return;
+                cur = i;
+                items.forEach((e, k) => e.classList.toggle('on', k === i));
+                scenes.forEach((e, k) => e.classList.toggle('on', k === i));
+                tls.forEach((t, k) => k === i ? t.restart() : t.pause(0));
+            };
+            show(0);
+
+            // ignoreMobileResize: bar alamat HP yang muncul/hilang tidak memicu hitung ulang (mencegah layar melompat)
+            ScrollTrigger.config({ ignoreMobileResize: true });
+            const mm = gsap.matchMedia();
+            // Layar cukup tinggi: section dikunci, scroll mengganti layanan
+            mm.add('(min-height: 561px)', () => {
+                const st = ScrollTrigger.create({
+                    trigger: '.show', start: 'top top', end: '+=300%', pin: true,
+                    anticipatePin: 1, invalidateOnRefresh: true,       // hitung ulang posisi kunci saat ukuran layar berubah
+                    onUpdate: s => show(Math.min(3, Math.floor(s.progress * 4)))
+                });
+                return () => st.kill();
+            });
+            // Layar pendek (HP landscape): tanpa kunci, layanan berganti sendiri tiap 4,5 detik
+            mm.add('(max-height: 560px)', () => {
+                const id = setInterval(() => show((cur + 1) % 4), 4500);
+                return () => clearInterval(id);
+            });
+            // Setelah ukuran layar berubah, pastikan posisi kunci dihitung ulang (mencegah section layanan menutupi hero)
+            let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => ScrollTrigger.refresh(), 250); });
+        })();
+    </script>
+</body>
+</html>
